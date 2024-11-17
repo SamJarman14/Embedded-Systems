@@ -1,46 +1,53 @@
 #include "uop_msb.h"
 using namespace uop_msb;
+#include <string.h>
 
-Buzzer buzz;
 
-DigitalOut led1(LED1);
-DigitalOut led2(LED2);
-DigitalOut led3(LED3);
+DigitalOut yellowLED(PC_3);
 
+
+
+void split(char *str, const char *sep, const char *res[], size_t n)
+{
+    for (size_t i = 0; i < n; i++) {
+        size_t len = strcspn(str, sep);
+        
+        res[i] = str;
+        
+        str += len;
+        if (*str) *str++ = '\0';
+        
+    }
+}
 
 int main()
-{
-    printf("\nTASK-112\n");
-
-    //getchar
-    char c1, c2;
-    printf("\n\nPress a key\n");
-    c1 = getchar();
-    printf("You entered character %c which has the ASCII code %d\n", c1, c1);
-
-    printf("\n\nPress another key\n");
-    c2 = getchar();
-    printf("You entered character %c which has the ASCII code %d\n", c2, c2);
-
-    //scanf
-    printf("\n\nTo set the delay (in ms), type in an integer number and press return\n");
-    int delay_ms;
-    int parsed = scanf("%d", &delay_ms);
+{   
+    char data[18];
+    scanf("%s", data);
+    size_t n = 6;
+    const char *token[n];
+    int year, month, day, hour, minute, second;
     
-    printf("You entered %d correct integer values. The value was %dms\n", parsed, delay_ms);
+    split(data, "/", token, n);
 
-    // Stop
-    while (parsed > 0) {
-        wait_us(delay_ms * 1000);
-        led1 = 1;
-        led2 = 1;
-        led3 = 1;
-        wait_us(delay_ms * 1000);
-        led1 = 0;
-        led2 = 0;
-        led3 = 0;        
-    } 
+    year = atoi(token[0]);
+    month = atoi(token[1]);
+    day = atoi(token[2]);
+    hour = atoi(token[3]);
+    minute = atoi(token[4]);
+    second = atoi(token[5]);
+    
+    printf("year is \"%d\"\n", year);
+    printf("month is \"%d\"\n", month);
+    printf("day is \"%d\"\n", day);
+    printf("hour is \"%d\"\n", hour);
+    printf("minute is \"%d\"\n", minute);
+    printf("second is \"%d\"\n", second);
 
-    printf("Invalid - please restart and try again\n");
-    while(1);    
+
+    while(1)
+    {
+        yellowLED = !yellowLED;
+        wait_us(500000);
+    }
 }
